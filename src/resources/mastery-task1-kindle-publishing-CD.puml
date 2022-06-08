@@ -1,1 +1,58 @@
 PARTICIPANTS: use this file for creating the class diagram in mastery task 01
+@startuml
+class GetBookActivity{
+GetBookActivity(CatalogDao, RecommendationsServiceClient)
+execute(GetBookRequest) : GetBookResponse
+}
+class GetPublishingStatusActivity {
+GetPublishingStatusActivity()
+execute(GetPublishingStatusRequest) : GetPublishingStatusResponse
+}
+class RemoveBookFromCatalogActivity {
+    execute(RemoveBookFromCatalogRequest) : RemoveBookFromCatalogResponse
+}
+class SubmitBookForPublishingActivity {
+SubmitBookForPublishingActivity(PublishingStatusDao)
+ execute(SubmitBookForPublishingRequest) : SubmitBookForPublishingResponse
+}
+class RecommendationsServiceClient
+class CatalogDao
+class PublishingStatusDao
+class CatalogItemVersion
+class PublishingStatusItem
+class BookNotFoundException
+class PublishingStatusNotFoundException
+
+GetBookActivity *-- CatalogDao
+GetBookActivity *-- RecommendationsServiceClient
+SubmitBookForPublishingActivity *-- PublishingStatusDao
+
+CatalogItemVersion -- CatalogDao
+PublishingStatusItem -- PublishingStatusDao
+CatalogDao -- BookNotFoundException
+
+class CatalogItemVersion  {
+-@DynamoDBHashKey bookId : String
+-@DynamoDBRangeKey version : int
+- inactive : boolean
+- author : String
+- text : String
+- genre : BookGenre
+}
+
+class PublishingStatusItem  {
+-@DynamoDBHashKey publishingRecordId : String
+-@DynamoDBRangeKey status : PublishingRecordStatus
+- statusMessage : String
+- bookId : String
+}
+
+class CatalogDao {
+dynamoDbMapper : DynamoDBMapper
+}
+
+class PublishingStatusDao {
+dynamoDbMapper : DynamoDBMapper
+}
+
+@enduml

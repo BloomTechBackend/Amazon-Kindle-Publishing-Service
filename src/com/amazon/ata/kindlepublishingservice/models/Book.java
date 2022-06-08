@@ -87,6 +87,7 @@ public class Book {
 
     public static Builder builder() {return new Builder();}
 
+
     public Book(Builder builder) {
         this.bookId = builder.bookId;
         this.title = builder.title;
