@@ -12,7 +12,8 @@ import javax.inject.Singleton;
 @Component(modules = {
         ClientsModule.class,
         DataAccessModule.class,
-        PublishingModule.class
+        PublishingModule.class,
+        BookPublishRequestManagerModule.class
 })
 public interface ApplicationComponent {
     GetBookActivity provideGetBookActivity();

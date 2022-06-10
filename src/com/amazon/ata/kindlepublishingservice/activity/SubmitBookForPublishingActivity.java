@@ -1,5 +1,7 @@
 package com.amazon.ata.kindlepublishingservice.activity;
 
+import com.amazon.ata.kindlepublishingservice.exceptions.BookNotFoundException;
+import com.amazon.ata.kindlepublishingservice.managers.BookPublishRequestManager;
 import com.amazon.ata.kindlepublishingservice.models.requests.SubmitBookForPublishingRequest;
 import com.amazon.ata.kindlepublishingservice.models.response.SubmitBookForPublishingResponse;
 import com.amazon.ata.kindlepublishingservice.converters.BookPublishRequestConverter;
@@ -9,6 +11,7 @@ import com.amazon.ata.kindlepublishingservice.dynamodb.models.PublishingStatusIt
 import com.amazon.ata.kindlepublishingservice.enums.PublishingRecordStatus;
 import com.amazon.ata.kindlepublishingservice.publishing.BookPublishRequest;
 
+import com.amazon.ata.kindlepublishingservice.utils.KindlePublishingUtils;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import org.apache.commons.lang3.StringUtils;
@@ -24,16 +27,26 @@ import javax.inject.Inject;
 public class SubmitBookForPublishingActivity {
 
     private PublishingStatusDao publishingStatusDao;
-
+    private CatalogDao catalogDao;
+    BookPublishRequestManager bookPublishRequestManager;
     /**
      * Instantiates a new SubmitBookForPublishingActivity object.
      *
      * @param publishingStatusDao PublishingStatusDao to access the publishing status table.
      */
     @Inject
-    public SubmitBookForPublishingActivity(PublishingStatusDao publishingStatusDao) {
+    public SubmitBookForPublishingActivity(PublishingStatusDao publishingStatusDao,
+                                           CatalogDao catalogDao,
+                                           BookPublishRequestManager bookPublishRequestManager) {
+
         this.publishingStatusDao = publishingStatusDao;
+        this.catalogDao = catalogDao;
+        this.bookPublishRequestManager = bookPublishRequestManager;
     }
+
+//    public SubmitBookForPublishingActivity(PublishingStatusDao publishingStatusDao) {
+//        this.publishingStatusDao = publishingStatusDao;
+//    }
 
     /**
      * Submits the book in the request for publishing.
@@ -45,10 +58,22 @@ public class SubmitBookForPublishingActivity {
      * to check the publishing state of the book.
      */
     public SubmitBookForPublishingResponse execute(SubmitBookForPublishingRequest request) {
+        // TODO: If there is a book ID in the request, validate it exists in our catalog
+        catalogDao.validateBookExists(request.getBookId());
+
         final BookPublishRequest bookPublishRequest = BookPublishRequestConverter.toBookPublishRequest(request);
 
-        // TODO: If there is a book ID in the request, validate it exists in our catalog
+//        try{
+//            catalogDao.validateBookExists(request.getBookId());
+//        } catch (BookNotFoundException e) {
+//            PublishingStatusItem item =  publishingStatusDao.setPublishingStatus(bookPublishRequest.getPublishingRecordId(),
+//                    PublishingRecordStatus.FAILED,
+//                    bookPublishRequest.getBookId());
+//        }
+
+
         // TODO: Submit the BookPublishRequest for processing
+        bookPublishRequestManager.addBookPublishRequest(bookPublishRequest);
 
         PublishingStatusItem item =  publishingStatusDao.setPublishingStatus(bookPublishRequest.getPublishingRecordId(),
                 PublishingRecordStatus.QUEUED,
