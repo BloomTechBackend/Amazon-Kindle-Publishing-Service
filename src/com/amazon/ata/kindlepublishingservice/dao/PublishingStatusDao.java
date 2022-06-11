@@ -7,10 +7,14 @@ import com.amazon.ata.kindlepublishingservice.utils.KindlePublishingUtils;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.PaginatedQueryList;
+import com.amazonaws.services.dynamodbv2.datamodeling.QueryResultPage;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.inject.Inject;
+import javax.management.Query;
 
 /**
  * Accesses the Publishing Status table.
@@ -76,5 +80,27 @@ public class PublishingStatusDao {
         item.setBookId(bookId);
         dynamoDbMapper.save(item);
         return item;
+    }
+
+    // Implement a query response here for DynamoDB,
+    public List<PublishingStatusItem> getPublishingRecordStatus(String publishingRecordId) {
+        PublishingStatusItem book = new PublishingStatusItem();
+        book.setPublishingRecordId(publishingRecordId);
+
+
+        //TODO: Fix the query expression so that it returns only the status ROW.
+        DynamoDBQueryExpression<PublishingStatusItem> queryExpression =
+                new DynamoDBQueryExpression<PublishingStatusItem>()
+                        .withHashKeyValues(book);
+//                        .withLimit(1);
+
+        QueryResultPage<PublishingStatusItem> statusQueryResult =
+                dynamoDbMapper.queryPage(PublishingStatusItem.class, queryExpression);
+
+        if (statusQueryResult.getResults().isEmpty()) {
+            throw new PublishingStatusNotFoundException("Publishing status not found!");
+        }
+
+        return statusQueryResult.getResults();
     }
 }
