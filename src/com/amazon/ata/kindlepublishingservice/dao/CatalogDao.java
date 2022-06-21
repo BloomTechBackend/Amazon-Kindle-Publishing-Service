@@ -88,15 +88,39 @@ public class CatalogDao {
 //            throw new BookNotFoundException(String.format("No book found for id: %s", bookId));
 //        }
 //    }
-    public void validateBookExists(String bookId) {
+    public boolean validateBookExists(String bookId) {
         try {
             CatalogItemVersion book = getLatestVersionOfBook(bookId);
-
-            if (book == null) {
-                throw new BookNotFoundException(String.format("No book found for id: %s", bookId));
-            }
+            //                throw new BookNotFoundException(String.format("No book found for id: %s", bookId));
+            return book != null;
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage() + "\n Must insert a bookId, partition key.");
         }
+        return true;
+    }
+
+    public CatalogItemVersion createOrUpdateBook(KindleFormattedBook book) {
+        if(book.getBookId() == null) { //add new book if it does not exist
+            CatalogItemVersion newlyCreatedBook = new CatalogItemVersion();
+            newlyCreatedBook.setBookId(KindlePublishingUtils.generateBookId());
+            newlyCreatedBook.setTitle(book.getTitle());
+            newlyCreatedBook.setAuthor(book.getAuthor());
+            newlyCreatedBook.setGenre(book.getGenre());
+            newlyCreatedBook.setText(book.getText());
+            newlyCreatedBook.setVersion(1);
+            return addCatalogItemVersion(newlyCreatedBook);
+        } else { //update existing book; if book doesn't exist, throw BookNotFoundException via nother method
+            CatalogItemVersion oldBook = getBookFromCatalog(book.getBookId()); //throws exception if book is not found
+            oldBook.setInactive(true);
+            addCatalogItemVersion(oldBook);
+            CatalogItemVersion newBook = getBookFromCatalog(book.getBookId()); //throws exception if book is not found
+            newBook.setVersion(oldBook.getVersion() + 1);
+            addCatalogItemVersion(newBook);
+            return newBook;
+        }
+    }
+    public CatalogItemVersion addCatalogItemVersion(CatalogItemVersion bookToAdd) {
+        dynamoDbMapper.save(bookToAdd);
+        return bookToAdd;
     }
 }

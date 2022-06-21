@@ -161,6 +161,8 @@ public class MasteryTaskFourSubmitBookForPublishingTests extends IntegrationTest
             "to mark the previous version inactive");
     }
 
+    //END OF MILESTONE 1 UP
+
     private PublishingStatusRecord waitForExpectedStatus(String publishingRecordId,
                                                          String expectedStatus) {
         System.out.println(String.format("Looking for publish request with ID %s in %s status.",
