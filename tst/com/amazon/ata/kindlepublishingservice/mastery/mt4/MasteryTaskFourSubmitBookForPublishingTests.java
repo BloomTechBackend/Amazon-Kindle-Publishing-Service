@@ -128,6 +128,7 @@ public class MasteryTaskFourSubmitBookForPublishingTests extends IntegrationTest
 
         SubmitBookForPublishingHelper.waitForPublishing();
 
+        //failing ID: 0d4a49f2-7516-4508-b86b-fec547ec0ffa
         // wait for successful status
         PublishingStatusRecord successful = waitForExpectedStatus(response.getPublishingRecordId(),
             PublishingStatus.SUCCESSFUL);

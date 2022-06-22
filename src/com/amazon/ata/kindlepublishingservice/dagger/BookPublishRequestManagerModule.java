@@ -5,7 +5,7 @@ import dagger.Module;
 import dagger.Provides;
 
 import javax.inject.Singleton;
-import java.util.LinkedList;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Module
 
@@ -14,6 +14,6 @@ public class BookPublishRequestManagerModule {
     @Singleton
     @Provides
     public BookPublishRequestManager provideBookPublishRequestManager() {
-        return new BookPublishRequestManager(new LinkedList<>());
+        return new BookPublishRequestManager(new ConcurrentLinkedQueue<>());
     }
 }

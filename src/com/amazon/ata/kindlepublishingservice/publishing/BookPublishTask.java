@@ -26,34 +26,39 @@ public class BookPublishTask implements Runnable {
     public void run() {
         BookPublishRequest publishRequest = requestManager.getBookPublishRequestToProcess();
         CatalogItemVersion newBook = null;
-        try {
-            if (publishRequest == null) {
-                return;
-            } else {
+//        try {
+        if (publishRequest == null) {
+            return;
+        } else {
+            publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
+                    PublishingRecordStatus.IN_PROGRESS,
+                    publishRequest.getBookId());
+            KindleFormattedBook formattedBook = KindleFormatConverter.format(publishRequest);
+            try {
+                newBook = catalogDao.createOrUpdateBook(formattedBook);
                 publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
-                        PublishingRecordStatus.IN_PROGRESS,
-                        publishRequest.getBookId());
-                KindleFormattedBook formattedBook = KindleFormatConverter.format(publishRequest);
-                try {
-                    newBook = catalogDao.createOrUpdateBook(formattedBook);
-                } catch (BookNotFoundException e) {
-                    publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
-                            PublishingRecordStatus.FAILED,
-                            publishRequest.getBookId(),
-                            e.getMessage());
-                }
+                        PublishingRecordStatus.SUCCESSFUL,
+                        newBook.getBookId());
+//                } catch (BookNotFoundException e) {
+//                    publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
+//                            PublishingRecordStatus.FAILED,
+//                            publishRequest.getBookId(),
+//                            e.getMessage());
+//                }
+            } catch (BookNotFoundException e) {
+                publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
+                        PublishingRecordStatus.FAILED,
+                        publishRequest.getBookId(),
+                        e.getMessage());
             }
             // any exception caught while processing:
-        } catch (Exception e) {
-            publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
-                    PublishingRecordStatus.FAILED,
-                    publishRequest.getBookId(),
-                    e.getMessage());
+//        } catch (Exception e) {
+//            publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
+//                    PublishingRecordStatus.FAILED,
+//                    publishRequest.getBookId(),
+//                    e.getMessage());
+//        }
         }
-        // else success:
-        publishingStatusDao.setPublishingStatus(publishRequest.getPublishingRecordId(),
-                PublishingRecordStatus.SUCCESSFUL,
-                newBook.getBookId());
     }
 
 }

@@ -110,11 +110,12 @@ public class CatalogDao {
             newlyCreatedBook.setVersion(1);
             return addCatalogItemVersion(newlyCreatedBook);
         } else { //update existing book; if book doesn't exist, throw BookNotFoundException via nother method
-            CatalogItemVersion oldBook = getBookFromCatalog(book.getBookId()); //throws exception if book is not found
-            oldBook.setInactive(true);
-            addCatalogItemVersion(oldBook);
-            CatalogItemVersion newBook = getBookFromCatalog(book.getBookId()); //throws exception if book is not found
-            newBook.setVersion(oldBook.getVersion() + 1);
+//            CatalogItemVersion oldBook = getLatestVersionOfBook(book.getBookId()); //throws exception if book is not found
+//            oldBook.setInactive(true);
+            //            addCatalogItemVersion(oldBook);
+            CatalogItemVersion newBook = getLatestVersionOfBook(book.getBookId()); //throws exception if book is not found
+            RemoveBookFromCatalog(book.getBookId());
+            newBook.setVersion(newBook.getVersion() + 1);
             addCatalogItemVersion(newBook);
             return newBook;
         }
