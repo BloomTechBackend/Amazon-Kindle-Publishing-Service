@@ -1,4 +1,10 @@
 
+## Explaining commit messages:
+MT1: 
+- Create class and sequence diagrams (inside resources file).
+- Implement soft-delete feature.  We don’t want to lose previous versions of the book that we have sold to customers. Instead, we’ll mark the current version as inactive so that it can never be returned by the GetBook operation, essentially deleted.
+
+
 ## The Problem: Amazon Kindle Publishing
 
 The Amazon Kindle store provides millions of ebooks to our customers. The process of publishing an
@@ -34,8 +40,6 @@ concurrently - we can think of this as multi-tasking for now.
 &nbsp;
 
 ## Project Mastery Tasks
-
-### [Mastery Task 1: Killing me softly](tasks/MasteryTask01.md)
 
 ### [Mastery Task 2: Submit to the process](tasks/MasteryTask02.md)
 
