@@ -1,5 +1,5 @@
 
-## Explaining Commit Messages:
+## Explaining Commit Messages
 MT1: 
 - Create class and sequence diagrams (inside resources file).
 - Implement soft-delete feature.  We don’t want to lose previous versions of the book that we have sold to customers. Instead, we’ll mark the current version as inactive so that it can never be returned by the GetBook operation, essentially deleted.
