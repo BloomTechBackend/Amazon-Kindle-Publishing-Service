@@ -12,9 +12,9 @@ MT3:
 - Create the GetPublishingStatusActivity class and implement the GetPublishingStatus operation. This allows a client to check in on the state of their publishing request.
 
 MT4:
-- Write a new class BookPublishTask, that implements a Runnable and processes a publish request from the BookPublishRequestManager. Using concurrency, this functionality processes the requests to get books published.
-- Update the Dagger code and relevant dependcies.
-- Update BookPublishRequestManager (change LinkedList to ConcurrentLinkedQueue) to be thread-safe so that it behaves as expected even if multiple threads are accessing it.
+- Write a new class BookPublishTask that implements a Runnable and processes a publish request from the BookPublishRequestManager. Using concurrency, this functionality processes the requests to get books published.
+- Update the Dagger code and relevant dependencies.
+- Update BookPublishRequestManagerto be thread-safe so that it behaves as expected even if multiple threads are accessing it.
 
 ## The Problem: Amazon Kindle Publishing
 
